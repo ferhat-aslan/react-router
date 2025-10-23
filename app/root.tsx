@@ -7,11 +7,11 @@ import {
   ScrollRestoration,
 } from "react-router";
 
-import type { Route } from "./+types/root";
+import type {Route} from "./+types/root";
 import "./app.css";
 
 export const links: Route.LinksFunction = () => [
-  { rel: "preconnect", href: "https://fonts.googleapis.com" },
+  {rel: "preconnect", href: "https://fonts.googleapis.com"},
   {
     rel: "preconnect",
     href: "https://fonts.gstatic.com",
@@ -21,14 +21,37 @@ export const links: Route.LinksFunction = () => [
     rel: "stylesheet",
     href: "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap",
   },
+  {
+    rel: "prefetch",
+    href: "../node_modules/preline/dist/preline.js",
+  },
 ];
 
-export function Layout({ children }: { children: React.ReactNode }) {
+export function Layout({children}: {children: React.ReactNode}) {
   return (
     <html lang="en">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <script src="../node_modules/preline/dist/preline.js"></script>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+          const html = document.querySelector('html'); const isLightOrAuto =
+          localStorage.getItem('hs_theme') === 'light' ||
+          (localStorage.getItem('hs_theme') === 'auto' &&
+          !window.matchMedia('(prefers-color-scheme: dark)').matches); const
+          isDarkOrAuto = localStorage.getItem('hs_theme') === 'dark' ||
+          (localStorage.getItem('hs_theme') === 'auto' &&
+          window.matchMedia('(prefers-color-scheme: dark)').matches); if
+          (isLightOrAuto && html.classList.contains('dark'))
+          html.classList.remove('dark'); else if (isDarkOrAuto &&
+          html.classList.contains('light')) html.classList.remove('light'); else
+          if (isDarkOrAuto && !html.classList.contains('dark'))
+          html.classList.add('dark'); else if (isLightOrAuto &&
+          !html.classList.contains('light')) html.classList.add('light'); `,
+          }}
+        ></script>
         <Meta />
         <Links />
       </head>
@@ -45,7 +68,7 @@ export default function App() {
   return <Outlet />;
 }
 
-export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
+export function ErrorBoundary({error}: Route.ErrorBoundaryProps) {
   let message = "Oops!";
   let details = "An unexpected error occurred.";
   let stack: string | undefined;
